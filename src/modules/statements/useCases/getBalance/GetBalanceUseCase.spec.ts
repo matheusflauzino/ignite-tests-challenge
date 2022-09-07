@@ -56,12 +56,22 @@ describe("GetBalanceUseCase", () => {
   });
 
   it("should not be able with user not found", async () => {
+    const user = await createUserUseCase.execute({
+      name: "username",
+      email: "teste@teste.com",
+      password: "12345678",
+    });
+
+    await createStatementUseCase.execute({
+      user_id: user.id as string,
+      type: "deposit" as OperationType,
+      amount: 100,
+      description: "teste",
+    });
+
     await expect(
-      createStatementUseCase.execute({
+      getBalanceUseCase.execute({
         user_id: "user_invalid",
-        type: "deposit" as OperationType,
-        amount: 100,
-        description: "teste",
       })
     ).rejects.toEqual(new GetBalanceError());
   });
